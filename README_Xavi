@@ -1,0 +1,218 @@
+
+
+
+   		               N U C P L O T
+		            -------------------
+
+		Written by Nicholas Luscombe & Roman Laskowski
+
+
+NUCPLOT is a program that automatically generates schematic 2D
+representations of protein-nucleic acid interactions. The input is a
+standard PDB file and the output is a colour or black-and-white PostScript
+file which gives a simple, at-a-glance representation of the hydrogen bonds
+and hydrophobic contacts between protein and nucleic acid.
+
+We recommend the use of HBPLUS (written by Ian McDonald) for calculating
+the hydrogen bonds and hydrophobic contacts to be plotted by NUCPLOT.
+
+
+INSTALLATION OF PROGRAMS
+------------------------
+
+1. Decompress and untar the HBPLUS and NUCPLOT programs.
+   
+   Type the following commands:
+	
+	gunzip hbplus.tar.gz
+	tar -xvf hbplus.tar
+	
+	gunzip nucplot.tar.gz
+	tar -xvf nucplot.tar
+
+   The above commands decompress the files containing the necessary
+   programs and creates directories called "hbplus" and "nucplot".
+
+2. Compiling the programs.
+
+   a) HBPLUS:
+      Change directories to hbplus and type the following command:
+      
+         make
+
+
+   b) NUCPLOT:
+      Change directories to nucplot and type the following command:
+
+         cc -o nucplot nucplot.c -lm
+         cc -o hbadd hbadd.c -lm
+
+      -lm is an option that includes the Standard Maths library.
+
+3. Het Group Dictionary
+
+   The hbadd program defines ligand molecules from information in the
+   PDB's Het Group Dictionary in order to help HBPLUS determine which
+   atoms in a ligand are potential hydrogen bond donor and acceptors.
+   For hbadd to run, you need to download a copy of the Het Group
+   Dictionary from
+
+       ftp://ftp.wwpdb.org/pub/pdb/data/monomers/components.cif
+OR
+	https://files.wwpdb.org/pub/pdb/data/monomers/components.cif
+
+   Call this file components.cif and place it in your NUCPLOT
+   executable directory (defined in step 4 below).
+
+4. Assignment of aliases/logical names
+
+   Under UNIX, the following aliases need to be defined to run NUCPLOT and
+   HBPLUS. They can be placed in the user's ".cshrc" file.
+
+       # NUCPLOT
+       # -------
+       set nucdir = 'nucplot-directory'         <---- See ** below
+       setenv nucdir 'nucplot-directory'
+       alias nucplot $nucdir'/nucplot.scr'
+
+       # HBPLUS
+       # ------
+       set hbdir = 'hbplus-program-directory'   <---- See ** below
+       setenv hbdir 'hbplus-program-directory'
+       alias hbplus $hbdir'/hbplus'
+
+       # ** nucplot-directory gives the full path to where the NUCPLOT
+       #    program files (and optionally the Het Group Dictionary) are
+       #    held.
+       #    Similarly, hbplus-program-directory is the full path to
+       #    where the copiled HBPLUS program resides.
+
+   After modifying the .cshrc file, type the following command to set up
+   the aliases:
+
+       source .cshrc
+
+
+RUNNING NUCPLOT
+---------------
+
+1. Running NUCPLOT.
+   
+   Simply type:
+
+      nucplot [pdb filename]
+
+      eg. nucplot /data/pdb/pdb1zaa.ent
+
+
+2. Outputs from NUCPLOT.
+
+   a) nucplot.ps   - A PostScript file showing the schematic diagram. This
+                     may be viewed with GHOSTSCRIPT or GHOSTVIEW.
+
+   b) pdbXXXX.bond - A text file containing a list of interactions shown on
+                     the plot, where XXXX is the PDB code.
+
+
+3. Altering the appearance of the plot.
+
+   The resulting plots can be altered by changing the plot parameters in
+   the parameter file "nucplot.par". It can be edited with any text
+   editor. If for any reason you wish to restore the parameter file to its
+   orignal state, simply delete the existing file and run nucplot. A fresh
+   copy of the file with the default settings will be produced.
+
+   a) Print options:
+      
+      Produce a colour PostScript file (Y/N)? - Defines whether the diagram
+      is drawn in colour or black and white.
+
+      Orientation of plot: (P)ortrait or (L)andscape? - Defines whether
+      the orientation of the plot is to be portrait or landscape.
+
+      Plot title (Y/N)? - Defines whether the PDB filename is shown on the
+      plot as a title.
+
+      Show key to plot (Y/N)? - Defines whether the key to the symbols on
+      the plot are shown.
+
+      Output filename = "nucplot.ps" (Y/N)? - Defines whether the output
+      filename is nucplot.ps. The alternative format is pdbname_X.ps where
+      pdbname is the name of the input file and X is the chain ID of the
+      first DNA chain on the plot.
+
+
+   b) Plot parameters:
+      
+      Read bonding information from .bond file (Y/N)? - Defines whether the
+      protein-DNA, water-DNA, and protein-water-DNA interaction information
+      is read from a file in .bond format. A file listing all the
+      interactions shown on the plot is automatically produced by
+      NUCPLOT. This can be edited and used as an input if the you wish
+      to display certain interactions only.
+
+      Include protein residue H-bonds (Y/N)? - Defines whether protein-DNA
+      hydrogen bonds should be included in the plot.
+
+      Include non-bridging water H-bonds (Y/N)? - Defines whether
+      non-bridging water-DNA hydrogen bonds should be included in the plot.
+
+      Include non-bonded contacts (Y/N)? - Defines whether van der Waals
+      interactions should be included in the plot.
+
+      Use one-letter amino acid codes for protein residue names (Y/N)? -
+      Defines whether the residue names shown on the plot are represented
+      by the single or three letter code.
+
+      Residues only, rather than all atoms, for non-bonded contacts (Y/N)?
+      - Defines whether the atom name is shown for the van der Waals
+      bonds. Showing only residue names reduces crowding on the plot.
+
+
+   c) Numerical parameters:
+   
+      Number of base pairs on each page - Defines the number of base pairs
+      to be placed on each page. 
+
+      Distance cut off for hydrogen bonds - Defines the cut off distance
+      for hydrogen bonds. Bonds must be below this length to be displayed
+      on the plot.
+
+      Distance cut off for non-bonded contacts - Defines the cut off
+      distance for van der Waals bonds. 
+   
+
+   d) Colour parameters: 
+
+      The colours of the background and various symbols of the plot can be
+      defined. The definitions of the different colours are described
+      below. The colour name must be one that is defined in the list of
+      colour definitions.
+
+
+   e) Colour definitions:
+   
+      The colour definitions table allows you to modify any of the default
+      colour definitions. You ca also set up new colours of your own (up to
+      20 different colours are allowed). 
+
+      Each entry contains three numbers, each between 0.0 and 1.0, giving
+      the ratios of red, green and blue, respectively, making up the given
+      colour.
+
+      Each colour has a name defined within the single quotes. These names
+      are referred to when assigning colours in the "Colour parameters"
+      section (see above section). 
+
+
+Roman Laskowski
+European Bioinformatics Institute,
+Wellcome Trust Genome Campus,
+Hinxton,
+Cambridge, CB10 1SD,
+United Kingdom
+
+Tel:- +44 (0)1223 492 542
+Fax:- +44 (0)1223 494 468
+
+Email: roman@ebi.ac.uk 
